@@ -1,0 +1,27 @@
+{
+  "name": "veanchatbot",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreeDOSSS/veanChatBot.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FreeDOSSS/veanChatBot/issues"
+  },
+  "homepage": "https://github.com/FreeDOSSS/veanChatBot#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "morgan": "^1.10.0",
+    "telegraf": "^3.38.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
