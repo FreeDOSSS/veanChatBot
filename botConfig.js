@@ -5,6 +5,7 @@ const inlineKeyboard = require("./helpers/inlineKeyboard");
 const { btnMenu, genMenu } = require("./constants/btn");
 const session = require("telegraf/session");
 const studio = require("./db/studio.json");
+console.clear();
 
 const bot = new Telegraf(process.env.TOKEN);
 bot.use(session());
@@ -23,10 +24,15 @@ bot.hears("Меню", (ctx) => {
   return ctx.reply("Что тебя интересует ?", inlineKeyboard(genMenu));
 });
 
+// TODO FIx Неправельный рендер списка (прпуски городов)
+
 bot.hears("Салоны", (ctx) => {
-  const list = studio.map((el, i) =>
-    i < 5 ? [Markup.callbackButton(el.city, "studio_info")] : []
-  );
+  // const list = studio.map((el, i) =>
+  //   i < 4 ? [Markup.callbackButton(el.city, "studio_info")] : []
+  // );
+  const list = studio
+    .filter((el, i) => i < 4)
+    .map((el) => [Markup.callbackButton(el.city, "studio_info")]);
 
   list.push([
     { text: "<<", callback_data: "prev_studio" },
@@ -42,22 +48,29 @@ bot.hears("Салоны", (ctx) => {
 });
 
 bot.on("callback_query", (ctx) => {
-  console.log("studio.length", studio.length / 5);
   const btn_prev = { text: "<<", callback_data: "prev_studio" };
   const btn_next = { text: ">>", callback_data: "next_studio" };
+
+  let page = ctx.session.studio_page;
   switch (ctx.callbackQuery.data) {
-    case "next_page":
-      ctx.session.studio_page =
-        ctx.session.studio_page + 1 < studio.length / 5
-          ? ctx.session.studio_page + 1
-          : "";
-      // btn_next.text = " ";
-      // btn_ne
+    case "next_studio":
+      page = page + 1 < studio.length / 5 ? page + 1 : page;
       break;
-    case "prev_page":
+    case "prev_studio":
+      page = page - 1 > 0 ? page - 1 : page;
       break;
+    default:
+      return;
   }
-  console.log("ctx.callback_data", ctx.callbackQuery.data);
+  ctx.session.studio_page = page;
+  const list = studio
+    .filter((el, i) => i > page * 5 && i < page * 5 + 5)
+    .map((el) => [Markup.callbackButton(el.city, "studio_info")]);
+  list.push([btn_prev, btn_next]);
+
+  //  ctx.editMessageReplyMarkup(inlineKeyboard(list));
+  // ctx.editMessageReplyMarkup(Markup.callbackButton("el.city", "studio_info"));
+  ctx.editMessageReplyMarkup(Markup.inlineKeyboard(list));
 });
 
 // Обработка главного меню
