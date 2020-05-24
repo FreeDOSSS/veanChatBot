@@ -1,4 +1,5 @@
 const { Telegraf } = require("telegraf");
+const Telegram = require("telegraf/telegram");
 const Markup = require("telegraf/markup");
 const keyboardDown = require("./helpers/keyboardDown");
 const inlineKeyboard = require("./helpers/inlineKeyboard");
@@ -6,6 +7,7 @@ const { btnMenu, genMenu } = require("./constants/btn");
 const session = require("telegraf/session");
 const studio = require("./db/studio.json");
 
+const telegram = new Telegram(process.env.TOKEN);
 const bot = new Telegraf(process.env.TOKEN);
 bot.use(session());
 
@@ -18,18 +20,17 @@ bot.start((ctx) => {
 });
 
 // Обработка нижнего меню
-
 bot.hears("Меню", (ctx) => {
   return ctx.reply("Что тебя интересует ?", inlineKeyboard(genMenu));
 });
 
-// Листание студий
+// <Листание студий>
 const btn_next_studio = { text: ">>", callback_data: "next_studio" };
 const btn_prev_studio = { text: "<<", callback_data: "prev_studio" };
 bot.hears("Салоны", (ctx) => {
   const list = studio
     .filter((el, i) => i < 4)
-    .map((el) => [Markup.callbackButton(el.city, "studio_info")]);
+    .map((el) => [Markup.callbackButton(el.city, `studio_info/${el.city}`)]);
 
   list.push([btn_prev_studio, btn_next_studio]);
 
@@ -40,8 +41,7 @@ bot.hears("Салоны", (ctx) => {
 const listStudioPage = (page) => {
   const arr = studio
     .filter((el, i) => i >= page * 4 && i < page * 4 + 4)
-    // .map((el) => [Markup.callbackButton(el.city, "studio_info")]);
-    .map((el) => [{ text: el.city, callback_data: `studio_info.${el.city}` }]);
+    .map((el) => [{ text: el.city, callback_data: `studio_info/${el.city}` }]);
   arr.push([btn_prev_studio, btn_next_studio]);
   return arr;
 };
@@ -61,51 +61,26 @@ bot.action("prev_studio", (ctx) => {
   ctx.editMessageReplyMarkup(Markup.inlineKeyboard(listStudioPage(page)));
 });
 
-// bot.on("callback_query", (ctx) => {
-//   let page = ctx.session.studio_page;
-//   // console.log("page", page);
-//   switch (ctx.callbackQuery.data) {
-//     case "next_studio":
-//       page = page + 1 <= studio.length / 4 ? page + 1 : page;
-//       break;
-//     case "prev_studio":
-//       page = page - 1 >= 0 ? page - 1 : page;
-//       break;
-//     default:
-//       return;
-//   }
+bot.on("callback_query", (ctx, next) => {
+  if (!ctx.callbackQuery.data.includes("studio_info")) next();
 
-//   const list = studio
-//     .filter((el, i) => i >= page * 4 && i < page * 4 + 4)
-//     .map((el) => [Markup.callbackButton(el.city, "studio_info")]);
-//   list.push([btn_prev, btn_next]);
+  const name = ctx.callbackQuery.data.split("/")[1];
 
-//   ctx.session.studio_page = page;
+  const city = studio.find((el) => el.city === name);
 
-//   //  ctx.editMessageReplyMarkup(inlineKeyboard(list));
-//   // ctx.editMessageReplyMarkup(Markup.callbackButton("el.city", "studio_info"));
-//   ctx.editMessageReplyMarkup(Markup.inlineKeyboard(list));
-// });
+  ctx.reply(
+    `Город: ${city.city}\nАдрес: ${city.street} \nГрафик работы: ${city.workTime}`
+  );
 
-// обработка инфы студии
-
-bot.action("studio_info", (ctx) => {
-  console.log("ctx", ctx.callbackQuery);
+  city.phone.forEach((phone, i) => {
+    telegram.sendContact(ctx.chat.id, phone, `VeAn ${city.city} #${i + 1}`);
+  });
 });
+//  </ Листание студий>
 
 // Обработка главного меню
-
 bot.action("menu", () => {
   console.log("menu");
 });
-// bot.action("menu", (ctx) => ctx.reply("Hello"));
 
 module.exports = bot;
-
-// TODO листать по текущий странице
-
-/*
-0 1 2 3 | 0
-4 5 6 7 | 1
-8 9 10 11 | 2
-*/

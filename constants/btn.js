@@ -15,4 +15,31 @@ const genMenu = [
   ],
 ];
 
+const genTatu = [
+  [Markup.callbackButton("У меня есть идея, эскиз", "tatu-idia")],
+  [
+    Markup.callbackButton(
+      "Нужна помощь!  Хочу узнать больше о тату!",
+      "tatu-help"
+    ),
+  ],
+];
+
+const helpTatu = [
+  [Markup.callbackButton("Стили тату", "tatu-style")],
+  [Markup.callbackButton("Стоимость сеанса", "tatu-price")],
+  [Markup.callbackButton("Работы мастеров", "tatu-workExemple")],
+  [
+    Markup.callbackButton(
+      "Бесплатная консультация в салоне",
+      "tatu-konsaltInsalun"
+    ),
+  ],
+];
+
+const styleTatu = [
+  [Markup.callbackButton("Я нашел то что нужно", "form1")],
+  [Markup.callbackButton("", "tatu-help")],
+];
+
 module.exports = { btnMenu, genMenu };
