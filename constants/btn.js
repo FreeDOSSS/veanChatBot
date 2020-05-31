@@ -37,9 +37,30 @@ const helpTatu = [
   ],
 ];
 
-const styleTatu = [
+const beckTatu = [
   [Markup.callbackButton("Я нашел то что нужно", "form1")],
-  [Markup.callbackButton("", "tatu-help")],
+  [Markup.callbackButton("Назад", "tatu-help")],
 ];
 
-module.exports = { btnMenu, genMenu };
+const styleList = [
+  [Markup.callbackButton("Trash Polka", "treshpolka")],
+  [Markup.callbackButton("Linework", "linework")],
+  [Markup.callbackButton("Black and Grey", "baclandgrey")],
+  [Markup.callbackButton("New School", "newschool")],
+  [Markup.callbackButton("Old School", "oldschool")],
+  [Markup.callbackButton("Реализм", "realizm")],
+  [Markup.callbackButton("Black Work", "blackwork")],
+  [Markup.callbackButton("Япония", "japonia")],
+  [Markup.callbackButton("Летеранг", "leterang")],
+  [Markup.callbackButton("Акварель", "arkvarel")],
+  [Markup.callbackButton("Dot Work", "dotwork")],
+];
+
+module.exports = {
+  btnMenu,
+  genMenu,
+  genTatu,
+  helpTatu,
+  beckTatu,
+  styleList,
+};
