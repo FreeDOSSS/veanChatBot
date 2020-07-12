@@ -26,7 +26,12 @@ bot.start((ctx) => {
 
 bot.action("gen-tatu", TatuService.gen);
 bot.action("tatu-help", TatuService.help);
-
+bot.action("tatu-price", TatuService.getPrice);
+// bot.action("");
+// bot.action("");
+// bot.action("");
+// bot.action("");
+// bot.action("");
 /*
 // Обработка нижнего меню
 bot.hears("Меню", (ctx) => {
