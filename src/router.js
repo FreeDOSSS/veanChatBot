@@ -1,28 +1,31 @@
-const { Telegraf } = require("telegraf");
-const session = require("telegraf/session");
+const { Telegraf, Stage } = require("telegraf");
 const Telegram = require("telegraf/telegram");
 const Markup = require("telegraf/markup");
+const session = require("telegraf/session");
 
 const keyboardDown = require("../helpers/keyboardDown");
 const inlineKeyboard = require("../helpers/inlineKeyboard");
 const { btnMenu, genMenu } = require("./../constants/btn");
-const studio = require("../db/studio.json");
+const { studio } = require("./../db");
+const scenes = require("./common/scene");
 // const sendStyle = require("./styleTatu/styleTatu");
-
-const telegram = new Telegram(process.env.TOKEN);
 
 const TatuService = require("./Tatu");
 const ListServices = require("./common/lists");
 
+const telegram = new Telegram(process.env.TOKEN);
 const bot = new Telegraf(process.env.TOKEN);
+
 bot.use(session());
+const stage = new Stage(scenes);
+bot.use(stage.middleware());
 
 bot.start((ctx) => {
   ctx.reply(
     `Хей, мы Vean tattoo ❤️\nБренд основан в 2011 году.\nМы несём тату в массы и получаем от этого удовольствие.\nПрисоединяйся к нам!`,
     keyboardDown(btnMenu)
   );
-  ctx.reply("Что тебя интересует ?", inlineKeyboard(genMenu));
+  ctx.reply(`${ctx.from.first_name}, что тебя интересует ?`, inlineKeyboard(genMenu));
 });
 
 bot.action("gen-tatu", TatuService.gen);
@@ -31,77 +34,45 @@ bot.action("tatu-price", TatuService.getPrice);
 
 // Управление списками
 bot.action("prev_list", (ctx) => {
-  console.log("ctx.session.list.prevPage()", ctx.session.list.prevPage());
   ctx.editMessageReplyMarkup(Markup.inlineKeyboard(ctx.session.list.prevPage()));
 });
 bot.action("next_list", (ctx) =>
   ctx.editMessageReplyMarkup(Markup.inlineKeyboard(ctx.session.list.nextPage()))
 );
-bot.action(new RegExp("select_item/"), (ctx) => console.log("select_item"));
+bot.action(new RegExp("select_item/"), (ctx) => ctx.session.list.selectItem(ctx));
 
 // Нижнее меню
-bot.hears("Салоны", (ctx) => {
-  ctx.session.list = new ListServices(studio, "text", () => {
-    console.log("object");
+bot.hears("Меню", (ctx) => {
+  return ctx.reply("Что тебя интересует ?", inlineKeyboard(genMenu));
+});
+
+bot.hears("Салоны", async (ctx) => {
+  await ctx.deleteMessage();
+  ctx.session.list = new ListServices(studio, "text", async (ctx, data) => {
+    await ctx.deleteMessage();
+    await ctx.reply(`Город: ${data.text}\nАдрес: ${data.street}\nГрафик работы: ${data.workTime}`);
+    data.phone.forEach((phone, i) => {
+      telegram.sendContact(ctx.chat.id, phone, `VeAn ${data.text} #${i + 1}`);
+    });
   });
 
   return ctx.reply("Выбирите город", inlineKeyboard(ctx.session.list.renderList()));
 });
+
+bot.command("test", (ctx) => ctx.scene.enter("formFirst"));
+bot.command("photo", (ctx) => {
+  const arrPhoto = ctx.session.infoUser.photo;
+  console.log(
+    "arrPhoto[arrPhoto.length - 1].file_id",
+    arrPhoto[arrPhoto.length - 1].file_unique_id
+  );
+  // TODO Отправить данные
+  ctx.replyWithPhoto(arrPhoto[arrPhoto.length - 1].file_id);
+});
+
 // bot.action("");
-// bot.action("");
-// bot.action("");
-// bot.action("");
-// bot.action("");
+
 /*
-// Обработка нижнего меню
-bot.hears("Меню", (ctx) => {
-    return ctx.reply("Что тебя интересует ?", inlineKeyboard(genMenu));
-});
-
-// <Листание студий>
-const btn_next_studio = {text: ">>", callback_data: "next_studio"};
-const btn_prev_studio = {text: "<<", callback_data: "prev_studio"};
-
-const listStudioPage = (page) => {
-    const arr = studio
-        .filter((el, i) => i >= page * 4 && i < page * 4 + 4)
-        .map((el) => [{text: el.city, callback_data: `studio_info/${el.city}`}]);
-    arr.push([btn_prev_studio, btn_next_studio]);
-    return arr;
-};
-
-bot.action("next_studio", (ctx) => {
-    let page = ctx.session.studio_page;
-    page = page + 1 <= studio.length / 4 ? page + 1 : page;
-
-    ctx.session.studio_page = page;
-    ctx.editMessageReplyMarkup(Markup.inlineKeyboard(listStudioPage(page)));
-});
-bot.action("prev_studio", (ctx) => {
-    let page = ctx.session.studio_page;
-
-    page = page - 1 >= 0 ? page - 1 : page;
-
-    ctx.session.studio_page = page;
-    ctx.editMessageReplyMarkup(Markup.inlineKeyboard(listStudioPage(page)));
-});
-
-bot.on("callback_query", (ctx, next) => {
-    if (!ctx.callbackQuery.data.includes("studio_info")) return next();
-
-    const name = ctx.callbackQuery.data.split("/")[1];
-
-    const city = studio.find((el) => el.city === name);
-
-    ctx.reply(
-        `Город: ${city.city}\nАдрес: ${city.street} \nГрафик работы: ${city.workTime}`
-    );
-
-    city.phone.forEach((phone, i) => {
-        telegram.sendContact(ctx.chat.id, phone, `VeAn ${city.city} #${i + 1}`);
-    });
-});
-//  </ Листание студий>
 
 // Ветка тату
 bot.action("gen-tatu", (ctx) => {
@@ -166,4 +137,7 @@ bot.on("callback_query", (ctx, next) => {
     // });
 });
 */
+bot.catch((err, ctx) => {
+  console.log(`Ooops, encountered an error for ${ctx.updateType}`, err);
+});
 module.exports = bot;

@@ -1,5 +1,5 @@
 const studio = require("./studio.json");
 
-const List = { studio };
+const Lists = { studio };
 
-module.exports = List;
+module.exports = Lists;
