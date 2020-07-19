@@ -6,12 +6,13 @@ const Markup = require("telegraf/markup");
 const keyboardDown = require("../helpers/keyboardDown");
 const inlineKeyboard = require("../helpers/inlineKeyboard");
 const { btnMenu, genMenu } = require("./../constants/btn");
-// const studio = require("../db/studio.json");
+const studio = require("../db/studio.json");
 // const sendStyle = require("./styleTatu/styleTatu");
 
 const telegram = new Telegram(process.env.TOKEN);
 
 const TatuService = require("./Tatu");
+const ListServices = require("./common/lists");
 
 const bot = new Telegraf(process.env.TOKEN);
 bot.use(session());
@@ -27,6 +28,25 @@ bot.start((ctx) => {
 bot.action("gen-tatu", TatuService.gen);
 bot.action("tatu-help", TatuService.help);
 bot.action("tatu-price", TatuService.getPrice);
+
+// Управление списками
+bot.action("prev_list", (ctx) => {
+  console.log("ctx.session.list.prevPage()", ctx.session.list.prevPage());
+  ctx.editMessageReplyMarkup(Markup.inlineKeyboard(ctx.session.list.prevPage()));
+});
+bot.action("next_list", (ctx) =>
+  ctx.editMessageReplyMarkup(Markup.inlineKeyboard(ctx.session.list.nextPage()))
+);
+bot.action(new RegExp("select_item/"), (ctx) => console.log("select_item"));
+
+// Нижнее меню
+bot.hears("Салоны", (ctx) => {
+  ctx.session.list = new ListServices(studio, "text", () => {
+    console.log("object");
+  });
+
+  return ctx.reply("Выбирите город", inlineKeyboard(ctx.session.list.renderList()));
+});
 // bot.action("");
 // bot.action("");
 // bot.action("");
@@ -41,16 +61,6 @@ bot.hears("Меню", (ctx) => {
 // <Листание студий>
 const btn_next_studio = {text: ">>", callback_data: "next_studio"};
 const btn_prev_studio = {text: "<<", callback_data: "prev_studio"};
-bot.hears("Салоны", (ctx) => {
-    const list = studio
-        .filter((el, i) => i < 4)
-        .map((el) => [Markup.callbackButton(el.city, `studio_info/${el.city}`)]);
-
-    list.push([btn_prev_studio, btn_next_studio]);
-
-    ctx.session.studio_page = 0;
-    return ctx.reply("Выбирите город", inlineKeyboard(list));
-});
 
 const listStudioPage = (page) => {
     const arr = studio
