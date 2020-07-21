@@ -1,5 +1,12 @@
+const { Telegram } = require("telegraf");
 const WizardScene = require("telegraf/scenes/wizard");
+const Extra = require("telegraf/extra");
+const { inlineKeyboard } = require("telegraf/markup");
+const { genMenu } = require("../../../constants/btn");
 
+const { CHAT_ID, TOKEN } = process.env;
+
+const telegram = new Telegram(TOKEN);
 class FormHandler {
   constructor() {
     this.name = "";
@@ -14,7 +21,11 @@ class FormHandler {
     this[name] = value;
   }
 
-  sendData() {}
+  sendData() {
+    const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nМесто и размер: ${this.description}`;
+    console.log("CHAT_ID", CHAT_ID);
+    telegram.sendMessage(CHAT_ID, text);
+  }
 }
 
 const FormScene = new WizardScene(
@@ -31,25 +42,36 @@ const FormScene = new WizardScene(
   },
   (ctx) => {
     ctx.session.infoUser.set("age", ctx.message.text);
-    ctx.reply("Введите номер");
-    // TODO Запросить номер
+    ctx.reply(
+      "Введите номер",
+      Extra.markup((markup) => {
+        return markup.resize().keyboard([markup.contactRequestButton("Отправить номер телефона")]);
+      })
+    );
     return ctx.wizard.next();
   },
   (ctx) => {
-    ctx.session.infoUser.set("phone", ctx.message.text);
+    ctx.session.infoUser.set("phone", ctx.message.text || ctx.message.contact.phone_number);
     ctx.reply("Введите место и размер тату");
     return ctx.wizard.next();
   },
   (ctx) => {
-    ctx.session.infoUser.set("photo", ctx.message.photo);
-    return ctx.scene.leave();
+    ctx.session.infoUser.set("description", ctx.message.text);
+    ctx.reply("Добавьте одно фото");
+    console.log("1", 1);
     return ctx.wizard.next();
   },
   (ctx) => {
-    ctx.session.infoUser.set("place", ctx.message.text);
-    // return ctx.wizard.next();
+    ctx.session.infoUser.set("photo", ctx.message.photo);
+    console.log("2", 2);
+    return ctx.scene.leave();
   }
 );
+
+FormScene.leave((ctx) => {
+  ctx.session.infoUser.sendData();
+  ctx.reply("Данные успешно отправлены", inlineKeyboard(genMenu));
+});
 // return ctx.scene.leave();
 
 module.exports = FormScene;

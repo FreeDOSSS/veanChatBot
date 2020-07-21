@@ -1,4 +1,4 @@
 require("dotenv").config();
-const bot = require("./src/router");
+const { bot } = require("./src/router");
 
 bot.launch();

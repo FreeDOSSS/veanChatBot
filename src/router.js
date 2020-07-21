@@ -19,7 +19,6 @@ const bot = new Telegraf(process.env.TOKEN);
 bot.use(session());
 const stage = new Stage(scenes);
 bot.use(stage.middleware());
-
 bot.start((ctx) => {
   ctx.reply(
     `Хей, мы Vean tattoo ❤️\nБренд основан в 2011 году.\nМы несём тату в массы и получаем от этого удовольствие.\nПрисоединяйся к нам!`,
@@ -140,4 +139,4 @@ bot.on("callback_query", (ctx, next) => {
 bot.catch((err, ctx) => {
   console.log(`Ooops, encountered an error for ${ctx.updateType}`, err);
 });
-module.exports = bot;
+module.exports = { bot, telegram };
