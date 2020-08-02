@@ -58,12 +58,10 @@ const FormScene = new WizardScene(
   (ctx) => {
     ctx.session.infoUser.set("description", ctx.message.text);
     ctx.reply("Добавьте одно фото");
-    console.log("1", 1);
     return ctx.wizard.next();
   },
   (ctx) => {
     ctx.session.infoUser.set("photo", ctx.message.photo);
-    console.log("2", 2);
     return ctx.scene.leave();
   }
 );

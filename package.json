@@ -19,6 +19,7 @@
   "homepage": "https://github.com/FreeDOSSS/veanChatBot#readme",
   "dependencies": {
     "dotenv": "^8.2.0",
+    "mammoth": "^1.4.9",
     "morgan": "^1.10.0",
     "telegraf": "^3.38.0"
   },
