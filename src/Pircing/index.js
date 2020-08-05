@@ -36,7 +36,6 @@ module.exports = class PircingService {
     });
     await ctx.replyWithMediaGroup(dataPhoto);
     return await ctx.reply(value, inlineKeyboard(btn.genPircing));
-    // await ctx.reply(message);
   }
 
   static async help(ctx) {}

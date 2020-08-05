@@ -36,7 +36,7 @@ const genPircing = [
   [Markup.callbackButton("Я знаю чего хочу", "pirsing-konsaltInsalun")],
   [Markup.callbackButton("Виды пирсинга", "prising-style")],
   [Markup.callbackButton("Работы мастеров", "prising-work")],
-  [Markup.callbackButton("Работы мастеров", "prising-buy")],
+  [Markup.callbackButton("Купить украшение", "salons")],
 ];
 
 module.exports = {

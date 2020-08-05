@@ -38,6 +38,18 @@ bot.action("tatu-workExemple", TatuService.mastersCity);
 // Пирсинг
 bot.action("genPirsing", PirsingService.genPircing);
 bot.action("prising-style", PirsingService.getListStyle);
+bot.action("salons", async (ctx) => {
+  await ctx.deleteMessage();
+  ctx.session.list = new ListServices(studio, "text", async (ctx, data) => {
+    await ctx.deleteMessage();
+    await ctx.reply(`Город: ${data.text}\nАдрес: ${data.street}\nГрафик работы: ${data.workTime}`);
+    data.phone.forEach((phone, i) => {
+      telegram.sendContact(ctx.chat.id, phone, `VeAn ${data.text} #${i + 1}`);
+    });
+  });
+
+  return ctx.reply("Выбирите город", inlineKeyboard(ctx.session.list.renderList()));
+});
 // bot.action("");
 
 // Управление списками
