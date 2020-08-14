@@ -12,7 +12,7 @@ const scenes = require("./common/scene");
 
 const TatuService = require("./Tatu");
 const ListServices = require("./common/lists");
-const PirsingService = require("./Pircing");
+const PirsingService = require("./Piercing");
 
 const telegram = new Telegram(process.env.TOKEN);
 const bot = new Telegraf(process.env.TOKEN);
@@ -29,14 +29,17 @@ bot.start((ctx) => {
   );
   ctx.reply(`${ctx.from.first_name}, что тебя интересует ?`, inlineKeyboard(genMenu));
 });
+bot.action("skip", (ctx) => ctx.wizard.next());
 
 bot.action("gen-tatu", TatuService.gen);
 bot.action("tatu-help", TatuService.help);
 bot.action("tatu-price", TatuService.getPrice);
 bot.action("tatu-style", TatuService.getListStyle);
 bot.action("tatu-workExemple", TatuService.mastersCity);
+bot.action("tatuForm", (ctx) => ctx.scene.enter("formFirst"));
+
 // Пирсинг
-bot.action("genPirsing", PirsingService.genPircing);
+bot.action("genPirsing", PirsingService.genPiercing);
 bot.action("prising-style", PirsingService.getListStyle);
 bot.action("salons", async (ctx) => {
   await ctx.deleteMessage();

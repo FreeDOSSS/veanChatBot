@@ -2,7 +2,8 @@ const { Telegram } = require("telegraf");
 const WizardScene = require("telegraf/scenes/wizard");
 const Extra = require("telegraf/extra");
 const { inlineKeyboard } = require("telegraf/markup");
-const { genMenu } = require("../../../constants/btn");
+const { genMenu, btnMenu } = require("../../../constants/btn");
+const Markup = require("telegraf/markup");
 
 const { CHAT_ID, TOKEN } = process.env;
 
@@ -52,12 +53,18 @@ const FormScene = new WizardScene(
   },
   (ctx) => {
     ctx.session.infoUser.set("phone", ctx.message.text || ctx.message.contact.phone_number);
-    ctx.reply("Введите место и размер тату");
+    ctx.reply("Введите место и размер тату", Markup.keyboard().oneTime().resize().extra());
     return ctx.wizard.next();
   },
   (ctx) => {
     ctx.session.infoUser.set("description", ctx.message.text);
-    ctx.reply("Добавьте одно фото");
+    ctx.reply(
+      "Добавьте одно фото",
+      Markup.keyboard([Markup.callbackButton("Пропустить", "skip")])
+        .oneTime()
+        .resize()
+        .extra()
+    );
     return ctx.wizard.next();
   },
   (ctx) => {
@@ -68,8 +75,7 @@ const FormScene = new WizardScene(
 
 FormScene.leave((ctx) => {
   ctx.session.infoUser.sendData();
-  ctx.reply("Данные успешно отправлены", inlineKeyboard(genMenu));
+  ctx.reply("Данные успешно отправлены", Markup.keyboard(btnMenu).oneTime().resize().extra());
 });
-// return ctx.scene.leave();
 
 module.exports = FormScene;

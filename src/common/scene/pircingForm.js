@@ -26,8 +26,8 @@ class FormHandler {
   }
 }
 
-const FormPircing = new WizardScene(
-  "formPircing",
+const FormPiercing = new WizardScene(
+  "formPiercing",
   (ctx) => {
     ctx.session.infoUser = new FormHandler();
     ctx.reply("Введите имя");
@@ -59,9 +59,9 @@ const FormPircing = new WizardScene(
   }
 );
 
-FormPircing.leave((ctx) => {
+FormPiercing.leave((ctx) => {
   ctx.session.infoUser.sendData();
   ctx.reply("Данные успешно отправлены", inlineKeyboard(genMenu));
 });
 
-module.exports = FormPircing;
+module.exports = FormPiercing;

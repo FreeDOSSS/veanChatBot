@@ -1,4 +1,4 @@
 const FormScene = require("./form");
-const FormPircing = require("./pircingForm");
+const FormPiercing = require("./pircingForm");
 
-module.exports = [FormScene, FormPircing];
+module.exports = [FormScene, FormPiercing];

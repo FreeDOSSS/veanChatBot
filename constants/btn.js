@@ -16,7 +16,7 @@ const genMenu = [
 ];
 
 const genTatu = [
-  [Markup.callbackButton("У меня есть идея, эскиз", "tatu-konsaltInsalun")],
+  [Markup.callbackButton("У меня есть идея, эскиз", "tatuForm")],
   [Markup.callbackButton("Нужна помощь!  Хочу узнать больше о тату!", "tatu-help")],
 ];
 
@@ -24,16 +24,16 @@ const helpTatu = [
   [Markup.callbackButton("Стили тату", "tatu-style")],
   [Markup.callbackButton("Стоимость сеанса", "tatu-price")],
   [Markup.callbackButton("Работы мастеров", "tatu-workExemple")],
-  [Markup.callbackButton("Бесплатная консультация в салоне", "tatu-konsaltInsalun")],
+  [Markup.callbackButton("Бесплатная консультация в салоне", "tatuForm")],
 ];
 
 const beckTatu = [
-  [Markup.callbackButton("Я нашел то что нужно", "tatu-konsaltInsalun")],
+  [Markup.callbackButton("Я нашел то что нужно", "tatuForm")],
   [Markup.callbackButton("Назад", "tatu-help")],
 ];
 
-const genPircing = [
-  [Markup.callbackButton("Я знаю чего хочу", "pirsing-konsaltInsalun")],
+const genPiercing = [
+  [Markup.callbackButton("Я знаю чего хочу", "piercing-konsaltInsalun")],
   [Markup.callbackButton("Виды пирсинга", "prising-style")],
   [Markup.callbackButton("Работы мастеров", "prising-work")],
   [Markup.callbackButton("Купить украшение", "salons")],
@@ -45,5 +45,5 @@ module.exports = {
   genTatu,
   helpTatu,
   beckTatu,
-  genPircing,
+  genPiercing,
 };
