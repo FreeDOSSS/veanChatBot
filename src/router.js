@@ -13,6 +13,7 @@ const scenes = require("./common/scene");
 const TatuService = require("./Tatu");
 const ListServices = require("./common/lists");
 const PirsingService = require("./Piercing");
+const PiercingService = require("./Piercing");
 
 const telegram = new Telegram(process.env.TOKEN);
 const bot = new Telegraf(process.env.TOKEN);
@@ -53,6 +54,7 @@ bot.action("salons", async (ctx) => {
 
   return ctx.reply("Выбирите город", inlineKeyboard(ctx.session.list.renderList()));
 });
+bot.action("prising-work", PiercingService.mastersCity);
 // bot.action("");
 
 // Управление списками

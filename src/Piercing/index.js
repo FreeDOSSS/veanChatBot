@@ -10,7 +10,7 @@ module.exports = class PiercingService {
     await ctx.deleteMessage();
     return await ctx.reply("Пирсинг", inlineKeyboard(btn.genPiercing));
   }
-  
+
   static async getListStyle(ctx) {
     await ctx.deleteMessage();
     const pathPiercingStyle = path.resolve("assets", "piercing", "style");
@@ -24,6 +24,7 @@ module.exports = class PiercingService {
   }
 
   static async callbackSelectStyle(ctx, { text }) {
+    ctx.deleteMessage();
     const pathPiercingStyle = path.resolve("assets", "piercing", "style", text);
     const files = fs.readdirSync(pathPiercingStyle);
     const imgs = files.filter((el) => !el.includes(".doc"));
@@ -39,11 +40,32 @@ module.exports = class PiercingService {
     return await ctx.reply(value, inlineKeyboard(btn.genPiercing));
   }
 
-  static async help(ctx) {
-    
+  static async mastersCity(ctx) {
+    ctx.deleteMessage();
+    const pathFolders = path.resolve("assets", "piercing", "masters");
+    const folders = fs.readdirSync(pathFolders);
+    ctx.session.list = new ListServices(
+      folders.map((text) => ({ text })),
+      "text",
+      PiercingService.callbackMaster
+    );
+    ctx.reply("Мастера", inlineKeyboard(ctx.session.list.renderList()));
   }
 
-  static async getPrice(ctx) {}
-
-  static async mastersCity(ctx) {}
+  static async callbackMaster(ctx, { text }) {
+    ctx.deleteMessage();
+    const pathPiercingStyle = path.resolve("assets", "piercing", "masters", text);
+    const files = fs.readdirSync(pathPiercingStyle);
+    const imgs = files.filter((el) => !el.includes(".doc"));
+    const text_file = files.find((el) => el.includes(".doc"));
+    const dataPhoto = imgs.map((img) => ({
+      media: { source: path.resolve(pathPiercingStyle, img) },
+      type: "photo",
+    }));
+    const { value } = await mammoth.extractRawText({
+      path: path.resolve(pathPiercingStyle, text_file),
+    });
+    await ctx.replyWithMediaGroup(dataPhoto);
+    return await ctx.reply(value, inlineKeyboard(btn.genPiercing));
+  }
 };
