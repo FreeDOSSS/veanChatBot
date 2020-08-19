@@ -4,7 +4,7 @@ const btnMenu = [["Меню"], ["Салоны"], ["Запись на сеанс"
 const genMenu = [
   [Markup.callbackButton("Тату", "gen-tatu")],
   [Markup.callbackButton("Пирсинг", "genPirsing")],
-  [Markup.callbackButton("Татуаж", "gen-tatuj")],
+  [Markup.callbackButton("Татуаж", "gen-tatuaz")],
   [Markup.callbackButton("Удаление", "gen-remove")],
   [Markup.callbackButton("VeAn SCHOOL", "gen-school")],
   [
@@ -38,6 +38,11 @@ const genPiercing = [
   [Markup.callbackButton("Работы мастеров", "prising-work")],
   [Markup.callbackButton("Купить украшение", "salons")],
 ];
+const genTatuaz = [
+  [Markup.callbackButton("Брови", "tatuaz/brovi")],
+  [Markup.callbackButton("Стрелки", "tatuaz/arrow")],
+  [Markup.callbackButton("Губы", "tatuaz/guby")],
+];
 
 module.exports = {
   btnMenu,
@@ -46,4 +51,5 @@ module.exports = {
   helpTatu,
   beckTatu,
   genPiercing,
+  genTatuaz,
 };

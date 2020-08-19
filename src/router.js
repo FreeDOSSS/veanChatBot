@@ -14,6 +14,7 @@ const TatuService = require("./Tatu");
 const ListServices = require("./common/lists");
 const PirsingService = require("./Piercing");
 const PiercingService = require("./Piercing");
+const TatuazService = require("./Tatuaz");
 
 const telegram = new Telegram(process.env.TOKEN);
 const bot = new Telegraf(process.env.TOKEN);
@@ -55,7 +56,13 @@ bot.action("salons", async (ctx) => {
   return ctx.reply("Выбирите город", inlineKeyboard(ctx.session.list.renderList()));
 });
 bot.action("prising-work", PiercingService.mastersCity);
-// bot.action("");
+// ========= Tatuaz =========
+bot.action("gen-tatuaz",  TatuazService.get);
+bot.action("tatuaz/brovi", (ctx) => TatuazService.getType(ctx, 'брови'));
+bot.action("tatuaz/arrow", (ctx) => TatuazService.getType(ctx, "стрелки"));
+bot.action("tatuaz/guby", (ctx) => TatuazService.getType(ctx, "губы"));
+
+
 
 // Управление списками
 bot.action("prev_list", (ctx) => {
