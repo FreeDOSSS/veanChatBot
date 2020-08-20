@@ -2,7 +2,6 @@ const btn = require("../../constants/btn");
 const inlineKeyboard = require("../../helpers/inlineKeyboard");
 const path = require("path");
 const fs = require("fs");
-const ListServices = require("../common/lists");
 
 module.exports = class TatuazService {
   static async get(ctx) {
@@ -29,4 +28,6 @@ module.exports = class TatuazService {
     
     return await ctx.reply(text, inlineKeyboard(btn.genTatuaz));
   }
+
+  
 };
