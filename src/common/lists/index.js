@@ -7,11 +7,9 @@ module.exports = class ListServices {
     this.offset = 0;
     this.limit = 5;
     this.callback = _fn;
-    console.log("_list", _list);
   }
 
   renderList() {
-    console.log("this.offset", this.offset);
     const render = this.list
       .filter((el, i) => i >= this.offset && i < this.offset + this.limit)
       .map((item, i) => [Markup.callbackButton(item[this.name], `select_item/${i}`)]);

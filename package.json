@@ -22,6 +22,11 @@
     "mammoth": "^1.4.9",
     "telegraf": "^3.38.0"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "src/UserManagement/users.json"
+    ]
+  },
   "devDependencies": {
     "nodemon": "^2.0.4"
   }

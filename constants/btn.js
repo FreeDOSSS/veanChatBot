@@ -1,5 +1,8 @@
 const Markup = require("telegraf/markup");
-const btnMenu = [["Меню"], ["Салоны"], ["Запись на сеанс"]];
+const btnMenu = [["Меню"], ["Салоны"], ["Получить консультацию"]];
+const btnSendNews = [
+  [Markup.callbackButton("✅", "sendNews/send"), Markup.callbackButton("❌", "sendNews/cancel")],
+];
 
 const genMenu = [
   [Markup.callbackButton("Тату", "gen-tatu")],
@@ -42,12 +45,13 @@ const genTatuaz = [
   [Markup.callbackButton("Брови", "tatuaz/brovi")],
   [Markup.callbackButton("Стрелки", "tatuaz/arrow")],
   [Markup.callbackButton("Губы", "tatuaz/guby")],
+  [Markup.callbackButton("Консультация", "tatuaz/form")],
 ];
 
 const genRemoved = [
   [Markup.callbackButton("Результаты сеансов", "removed/result")],
   [Markup.callbackButton("Описание процесса", "removed/process")],
-  [Markup.callbackButton("записаться на сеанс", "removed/session")],
+  [Markup.callbackButton("Записаться на сеанс", "removed/form")],
 ];
 
 const sessionsRemoved = [
@@ -55,14 +59,14 @@ const sessionsRemoved = [
   [Markup.callbackButton("Три сеанс", "removed/session_3")],
   [Markup.callbackButton("Пять сеансов", "removed/session_5")],
   [Markup.callbackButton("Назад", "removed/prev")],
-]
+];
 
 const genSchool = [
   [Markup.callbackButton("Тату", "school/tatu")],
   [Markup.callbackButton("Татуаж", "school/tatuaz")],
   [Markup.callbackButton("Пирсинг", "school/piercing")],
   [Markup.callbackButton("Мне нужна консультация", "school/help")],
-]
+];
 
 module.exports = {
   btnMenu,
@@ -75,4 +79,5 @@ module.exports = {
   genRemoved,
   sessionsRemoved,
   genSchool,
+  btnSendNews,
 };

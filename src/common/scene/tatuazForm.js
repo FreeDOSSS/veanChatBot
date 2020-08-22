@@ -25,8 +25,8 @@ class FormHandler {
   }
 }
 
-const FormPiercing = new WizardScene(
-  "formPiercing",
+const FormTatuaz = new WizardScene(
+  "formTatuaz",
   (ctx) => {
     ctx.session.infoUser = new FormHandler();
     ctx.reply("Введите имя");
@@ -49,18 +49,18 @@ const FormPiercing = new WizardScene(
   },
   (ctx) => {
     ctx.session.infoUser.set("phone", ctx.message.text || ctx.message.contact.phone_number);
-    ctx.reply("Введите тип пирсинга", Markup.keyboard().oneTime().resize().extra());
+    ctx.reply("Введите вид татуажа", Markup.keyboard().oneTime().resize().extra());
     return ctx.wizard.next();
   },
-  (ctx) => {
+    (ctx) => {
     ctx.session.infoUser.set("type", ctx.message.text);
     return ctx.scene.leave();
   }
 );
 
-FormPiercing.leave((ctx) => {
+FormTatuaz.leave((ctx) => {
   ctx.session.infoUser.sendData();
   ctx.reply("Данные успешно отправлены", Markup.keyboard(btnMenu).oneTime().resize().extra());
 });
 
-module.exports = FormPiercing;
+module.exports = FormTatuaz;

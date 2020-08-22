@@ -24,7 +24,6 @@ class FormHandler {
 
   sendData() {
     const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nМесто и размер: ${this.description}`;
-    console.log("CHAT_ID", CHAT_ID);
     telegram.sendMessage(CHAT_ID, text);
   }
 }

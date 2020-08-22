@@ -16,6 +16,7 @@ const PiercingService = require("./Piercing");
 const TatuazService = require("./Tatuaz");
 const RemovedService = require("./Removed");
 const SchoolService = require("./School");
+const UserManagement = require("./UserManagement");
 
 const telegram = new Telegram(process.env.TOKEN);
 const bot = new Telegraf(process.env.TOKEN);
@@ -26,11 +27,7 @@ const stage = new Stage(scenes);
 bot.use(stage.middleware());
 
 bot.start((ctx) => {
-  ctx.reply(
-    `Хей, мы Vean tattoo ❤️\nБренд основан в 2011 году.\nМы несём тату в массы и получаем от этого удовольствие.\nПрисоединяйся к нам!`,
-    keyboardDown(btnMenu)
-  );
-  ctx.reply(`${ctx.from.first_name}, что тебя интересует ?`, inlineKeyboard(genMenu));
+  ctx.scene.enter("HelloForm");
 });
 bot.action("skip", (ctx) => ctx.wizard.next());
 
@@ -44,6 +41,7 @@ bot.action("tatuForm", (ctx) => ctx.scene.enter("formFirst"));
 // Пирсинг
 bot.action("genPirsing", PirsingService.genPiercing);
 bot.action("prising-style", PirsingService.getListStyle);
+bot.action("piercing-konsaltInsalun", (ctx) => ctx.scene.enter("formPiercing"));
 bot.action("salons", async (ctx) => {
   await ctx.deleteMessage();
   ctx.session.list = new ListServices(studio, "text", async (ctx, data) => {
@@ -54,22 +52,27 @@ bot.action("salons", async (ctx) => {
     });
   });
 
-  return ctx.reply("Выбирите город", inlineKeyboard(ctx.session.list.renderList()));
+  return ctx.reply("Выберите город", inlineKeyboard(ctx.session.list.renderList()));
 });
 bot.action("prising-work", PiercingService.mastersCity);
+
 // ========= Tatuaz =========
 bot.action("gen-tatuaz", TatuazService.get);
 bot.action("tatuaz/brovi", (ctx) => TatuazService.getType(ctx, "брови"));
 bot.action("tatuaz/arrow", (ctx) => TatuazService.getType(ctx, "стрелки"));
 bot.action("tatuaz/guby", (ctx) => TatuazService.getType(ctx, "губы"));
+bot.action("tatuaz/form", (ctx) => ctx.scene.enter("formTatuaz"));
+
 // ========= Removed =========
 bot.action("gen-remove", RemovedService.get);
 bot.action("removed/result", RemovedService.getSessions);
-bot.action("removed/session_1", ctx => RemovedService.getResultSessions(ctx, 'один сеанс'));
-bot.action("removed/session_3", ctx => RemovedService.getResultSessions(ctx, 'три сеанса'));
-bot.action("removed/session_5", ctx => RemovedService.getResultSessions(ctx, 'пять сеансов'));
+bot.action("removed/session_1", (ctx) => RemovedService.getResultSessions(ctx, "один сеанс"));
+bot.action("removed/session_3", (ctx) => RemovedService.getResultSessions(ctx, "три сеанса"));
+bot.action("removed/session_5", (ctx) => RemovedService.getResultSessions(ctx, "пять сеансов"));
+bot.action("removed/form", (ctx) => ctx.scene.enter("removedForm"));
 bot.action("removed/process", RemovedService.sendDescription);
 bot.action("removed/prev", RemovedService.get);
+
 // ========= School =========
 bot.action("gen-school", SchoolService.get);
 bot.action("school/tatu", (ctx) => SchoolService.getType(ctx, "tatu"));
@@ -103,7 +106,22 @@ bot.hears("Салоны", async (ctx) => {
 
   return ctx.reply("Выбирите город", inlineKeyboard(ctx.session.list.renderList()));
 });
-// ==========
+bot.hears("Получить консультацию", (ctx) => ctx.scene.enter("commonForm"));
+// Newsletter
+bot.command("sendNews", (ctx) => {
+  ctx.scene.enter("SendNews");
+});
+bot.action("sendNews/send", async (ctx) => {
+  console.dir(ctx.session.infoUser)
+  await ctx.session.infoUser.sendData(ctx);
+  await ctx.reply(`${ctx.from.first_name}, что тебя интересует?`, inlineKeyboard(genMenu));
+});
+bot.action("sendNews/cancel", async (ctx) => {
+  await ctx.reply('Отмена новости');
+  delete ctx.session.infoUser;
+  await ctx.reply(`${ctx.from.first_name}, что тебя интересует?`, inlineKeyboard(genMenu));
+});
+
 bot.catch((err, ctx) => {
   console.log(`Ooops, encountered an error for ${ctx.updateType}`, err);
   ctx.reply("Упс(((\nЧто-то пошло не так, перезапусти меня)");

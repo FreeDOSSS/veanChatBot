@@ -25,11 +25,9 @@ module.exports = class RemovedService {
       media: { source: path.resolve(pathFoto, img) },
       type: "photo",
     }));
-    console.log("dataPhoto", path.resolve(__dirname, dataPhoto[0].media.source));
     if (dataPhoto.length > 1) {
       await ctx.replyWithMediaGroup(dataPhoto);
     } else {
-      console.log("1", 1);
       await ctx.replyWithPhoto({ source: path.resolve(dataPhoto[0].media.source) });
     }
     return await ctx.reply("Еще варианты", inlineKeyboard(btn.sessionsRemoved));
