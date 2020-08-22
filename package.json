@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "prestart": "git pull",
+    "start": "node index.js",
+    "runtime": "pm2 --name bot start npm -- start"
   },
   "repository": {
     "type": "git",
