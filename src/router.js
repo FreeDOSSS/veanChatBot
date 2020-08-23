@@ -106,7 +106,7 @@ bot.hears("Салоны", async (ctx) => {
 
   return ctx.reply("Выбирите город", inlineKeyboard(ctx.session.list.renderList()));
 });
-bot.hears("Получить консультацию", (ctx) => ctx.scene.enter("commonForm"));
+bot.hears("Я не нашёл ответа на вопрос", (ctx) => ctx.scene.enter("commonForm"));
 // Newsletter
 bot.command("sendNews", (ctx) => {
   ctx.scene.enter("SendNews");

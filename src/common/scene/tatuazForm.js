@@ -9,10 +9,10 @@ const { CHAT_ID, TOKEN } = process.env;
 const telegram = new Telegram(TOKEN);
 class FormHandler {
   constructor() {
-    this.name = "";
-    this.phone = "";
-    this.age = "";
-    this.type = "";
+    this.name = null;
+    this.phone = null;
+    this.age = null;
+    this.type = null;
   }
 
   set(name, value) {
@@ -22,6 +22,10 @@ class FormHandler {
   sendData() {
     const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nТип: ${this.type}`;
     telegram.sendMessage(CHAT_ID, text);
+  }
+
+  checkData() {
+    return !!this.name && !!this.phone && !!this.age && !!this.type;
   }
 }
 
@@ -59,6 +63,7 @@ const FormTatuaz = new WizardScene(
 );
 
 FormTatuaz.leave((ctx) => {
+  if (!ctx.session.infoUser.checkData()) return;
   ctx.session.infoUser.sendData();
   ctx.reply("Данные успешно отправлены", Markup.keyboard(btnMenu).oneTime().resize().extra());
 });

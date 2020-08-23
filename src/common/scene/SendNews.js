@@ -19,6 +19,10 @@ class FormHandler {
     await UserManagement.sendNewsletter(this.text, ctx);
     // ctx.wizard.next();
   }
+
+  checkData() {
+    return !!this.text
+  }
 }
 
 const SendNews = new WizardScene(

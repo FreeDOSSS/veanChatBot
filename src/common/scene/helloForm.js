@@ -11,8 +11,8 @@ const { CHAT_ID, TOKEN } = process.env;
 const telegram = new Telegram(TOKEN);
 class FormHandler {
   constructor() {
-    this.name = "";
-    this.phone = "";
+    this.name = null;
+    this.phone = null;
     this.userID = null;
   }
 

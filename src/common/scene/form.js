@@ -10,21 +10,29 @@ const { CHAT_ID, TOKEN } = process.env;
 const telegram = new Telegram(TOKEN);
 class FormHandler {
   constructor() {
-    this.name = "";
-    this.phone = "";
-    this.age = "";
-    this.place = "";
-    this.description = "";
-    this.photo = "";
+    this.name = null;
+    this.phone = null;
+    this.age = null;
+    this.place = null;
+    this.description = null;
+    this.photo = null;
   }
 
   set(name, value) {
     this[name] = value;
   }
 
-  sendData() {
+  async sendData() {
+    console.log("this.photo", this.photo);
     const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nМесто и размер: ${this.description}`;
-    telegram.sendMessage(CHAT_ID, text);
+    await telegram.sendMessage(CHAT_ID, text);
+    if (photo) {
+      await telegram.sendPhoto(CHAT_ID, this.photo[this.photo.length - 1].file_id);
+    }
+  }
+
+  checkData() {
+    return !!this.name && !!this.phone && !!this.age && !!this.description;
   }
 }
 
@@ -67,12 +75,14 @@ const FormScene = new WizardScene(
     return ctx.wizard.next();
   },
   (ctx) => {
+    console.log("ctx.message", ctx.message);
     ctx.session.infoUser.set("photo", ctx.message.photo);
     return ctx.scene.leave();
   }
 );
 
 FormScene.leave((ctx) => {
+  if (!ctx.session.infoUser.checkData()) return;
   ctx.session.infoUser.sendData();
   ctx.reply("Данные успешно отправлены", Markup.keyboard(btnMenu).oneTime().resize().extra());
 });

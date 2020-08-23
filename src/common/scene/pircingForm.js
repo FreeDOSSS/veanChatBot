@@ -23,6 +23,10 @@ class FormHandler {
     const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nТип: ${this.type}`;
     telegram.sendMessage(CHAT_ID, text);
   }
+
+  checkData() {
+    return !!this.name && !!this.phone && !!this.age && !!this.type;
+  }
 }
 
 const FormPiercing = new WizardScene(
@@ -59,6 +63,7 @@ const FormPiercing = new WizardScene(
 );
 
 FormPiercing.leave((ctx) => {
+  if (!ctx.session.infoUser.checkData()) return;
   ctx.session.infoUser.sendData();
   ctx.reply("Данные успешно отправлены", Markup.keyboard(btnMenu).oneTime().resize().extra());
 });

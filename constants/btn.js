@@ -1,5 +1,5 @@
 const Markup = require("telegraf/markup");
-const btnMenu = [["Меню"], ["Салоны"], ["Получить консультацию"]];
+const btnMenu = [["Меню"], ["Салоны"], ["Я не нашёл ответа на вопрос"]];
 const btnSendNews = [
   [Markup.callbackButton("✅", "sendNews/send"), Markup.callbackButton("❌", "sendNews/cancel")],
 ];

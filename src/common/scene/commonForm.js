@@ -9,9 +9,10 @@ const { CHAT_ID, TOKEN } = process.env;
 const telegram = new Telegram(TOKEN);
 class FormHandler {
   constructor() {
-    this.name = "";
-    this.phone = "";
-    this.age = "";
+    this.name = null;
+    this.phone = null;
+    this.age = null;
+    this.text = null
   }
 
   set(name, value) {
@@ -19,8 +20,12 @@ class FormHandler {
   }
 
   sendData() {
-    const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}`;
-    telegram.sendMessage(CHAT_ID, text);
+    const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nТекст: ${this.text}`;
+    telegram.sendMessage(CHAT_ID, text).catch(err => console.log('err', err));
+  }
+
+  checkData() {
+    return !!this.name && !!this.phone && !!this.age && !!this.text;
   }
 }
 
@@ -38,6 +43,11 @@ const CommonForm = new WizardScene(
   },
   (ctx) => {
     ctx.session.infoUser.set("age", ctx.message.text);
+    ctx.reply("Введите комментарий");
+    return ctx.wizard.next();
+  },
+  (ctx) => {
+    ctx.session.infoUser.set("text", ctx.message.text);
     ctx.reply(
       "Введите номер",
       Extra.markup((markup) => {
@@ -53,6 +63,7 @@ const CommonForm = new WizardScene(
 );
 
 CommonForm.leave((ctx) => {
+  if (!ctx.session.infoUser.checkData()) return;
   ctx.session.infoUser.sendData();
   ctx.reply("Данные успешно отправлены", Markup.keyboard(btnMenu).oneTime().resize().extra());
 });
