@@ -16,6 +16,7 @@ class FormHandler {
     this.place = null;
     this.description = null;
     this.photo = null;
+    this.city = null;
   }
 
   set(name, value) {
@@ -24,7 +25,7 @@ class FormHandler {
 
   async sendData() {
     console.log("this.photo", this.photo);
-    const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nМесто и размер: ${this.description}`;
+    const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nМесто и размер: ${this.description}\nГород: ${this.city}`;
     await telegram.sendMessage(CHAT_ID, text);
     if (photo) {
       await telegram.sendPhoto(CHAT_ID, this.photo[this.photo.length - 1].file_id);
@@ -32,7 +33,7 @@ class FormHandler {
   }
 
   checkData() {
-    return !!this.name && !!this.phone && !!this.age && !!this.description;
+    return !!this.name && !!this.phone && !!this.age && !!this.description && !!this.city;
   }
 }
 
@@ -50,6 +51,11 @@ const FormScene = new WizardScene(
   },
   (ctx) => {
     ctx.session.infoUser.set("age", ctx.message.text);
+    ctx.reply("Введите город")
+    return ctx.wizard.next();
+  },
+  (ctx) => {
+    ctx.session.infoUser.set("city", ctx.message.text);
     ctx.reply(
       "Введите номер",
       Extra.markup((markup) => {

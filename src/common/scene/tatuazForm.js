@@ -13,6 +13,7 @@ class FormHandler {
     this.phone = null;
     this.age = null;
     this.type = null;
+    this.city = null;
   }
 
   set(name, value) {
@@ -20,7 +21,7 @@ class FormHandler {
   }
 
   sendData() {
-    const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nТип: ${this.type}`;
+    const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nТип: ${this.type}\nГород: ${this.city}`;
     telegram.sendMessage(CHAT_ID, text);
   }
 
@@ -43,6 +44,11 @@ const FormTatuaz = new WizardScene(
   },
   (ctx) => {
     ctx.session.infoUser.set("age", ctx.message.text);
+    ctx.reply("Введите город");
+    return ctx.wizard.next();
+  },
+  (ctx) => {
+    ctx.session.infoUser.set("city", ctx.message.text);
     ctx.reply(
       "Введите номер",
       Extra.markup((markup) => {
@@ -56,7 +62,7 @@ const FormTatuaz = new WizardScene(
     ctx.reply("Введите вид татуажа", Markup.keyboard().oneTime().resize().extra());
     return ctx.wizard.next();
   },
-    (ctx) => {
+  (ctx) => {
     ctx.session.infoUser.set("type", ctx.message.text);
     return ctx.scene.leave();
   }
