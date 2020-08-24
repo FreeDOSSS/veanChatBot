@@ -4,5 +4,5 @@
 yarn.lock
 yarn-error.log
 
-*/**/users.json
-src/UserManagement/users.json
+users.json
+/src/UserManagement/users.json
