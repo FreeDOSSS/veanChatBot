@@ -1,8 +1,8 @@
 const users = require("./users");
 const fs = require("fs");
 const path = require("path");
-const { Telegram } = require("telegraf");
-
+const { Telegram, Markup } = require("telegraf");
+const { btnMenu } = require("./../../constants/btn");
 const { TOKEN } = process.env;
 const telegram = new Telegram(TOKEN);
 
@@ -18,38 +18,52 @@ module.exports = class UserManagement {
     fs.writeFileSync(path.resolve(__dirname, "users.json"), JSON.stringify(data));
   }
 
-  static async sendNewsletter(text, ctx) {
+  static async sendNewsletter(meta, ctx) {
     const data = JSON.parse(fs.readFileSync(path.resolve(__dirname, "users.json"), "utf-8"));
     const arreyPromis = [];
     let sucs = 0;
     const error = [];
     data.forEach(({ id }) => {
-      arreyPromis.push(
-        telegram
-          .sendMessage(id, text)
-          .then((res) => (sucs += 1))
-          .catch((err) => (err.code === 403 ? error.push(err.on.payload.chat_id) : null))
-      );
+      if (meta.photo) {
+        arreyPromis.push(
+          telegram
+            .sendPhoto(id, meta.photo[meta.photo.length - 1].file_id, { caption: meta.text })
+            .then((res) => (sucs += 1))
+            .catch((err) => {
+              console.log("err", err);
+              return err.code === 403 ? error.push(id) : null;
+            })
+        );
+      } else {
+        if (meta.text) {
+          arreyPromis.push(
+            telegram
+              .sendMessage(id, meta.text)
+              .then((res) => (sucs += 1))
+              .catch((err) => {
+                console.log("err", err);
+                return err.code === 403 ? error.push(id) : null;
+              })
+          );
+        }
+      }
     });
 
     Promise.all(arreyPromis)
-      .then()
       .catch()
       .finally(() => {
         delUsers(error);
-        ctx.reply(`Кількість користувачів які отримали повідомлення  - ${sucs}`);
+        ctx.reply(
+          `Кількість користувачів які отримали повідомлення  - ${sucs}`,
+          Markup.keyboard(btnMenu).oneTime().resize().extra()
+        );
       });
   }
 };
 
 function delUsers(arr) {
+  console.log("arr", arr);
   const data = JSON.parse(fs.readFileSync(path.resolve(__dirname, "users.json"), "utf-8"));
-
-  arr.forEach((el) => {
-    data.includes(el);
-    if (data.includes(el)) {
-      data.splice(data.indexOf(el), 1);
-    }
-  });
-  fs.writeFileSync(path.resolve(__dirname, "users.json"), JSON.stringify(data));
+  const filterData = data.filter((el) => !arr.includes(el.id));
+  fs.writeFileSync(path.resolve(__dirname, "users.json"), JSON.stringify(filterData));
 }

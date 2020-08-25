@@ -24,10 +24,12 @@ class FormHandler {
   }
 
   async sendData() {
-    console.log("this.photo", this.photo);
-    const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nМесто и размер: ${this.description}\nГород: ${this.city}`;
+    let text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nМесто и размер: ${this.description}\nГород: ${this.city}`;
+    if (this.title) {
+      text = `${this.title}\n${text}`;
+    }
     await telegram.sendMessage(CHAT_ID, text);
-    if (photo) {
+    if (this.photo) {
       await telegram.sendPhoto(CHAT_ID, this.photo[this.photo.length - 1].file_id);
     }
   }
@@ -51,7 +53,7 @@ const FormScene = new WizardScene(
   },
   (ctx) => {
     ctx.session.infoUser.set("age", ctx.message.text);
-    ctx.reply("Введите город")
+    ctx.reply("Введите город");
     return ctx.wizard.next();
   },
   (ctx) => {
@@ -81,7 +83,6 @@ const FormScene = new WizardScene(
     return ctx.wizard.next();
   },
   (ctx) => {
-    console.log("ctx.message", ctx.message);
     ctx.session.infoUser.set("photo", ctx.message.photo);
     return ctx.scene.leave();
   }
@@ -90,7 +91,10 @@ const FormScene = new WizardScene(
 FormScene.leave((ctx) => {
   if (!ctx.session.infoUser.checkData()) return;
   ctx.session.infoUser.sendData();
-  ctx.reply("Данные успешно отправлены", Markup.keyboard(btnMenu).oneTime().resize().extra());
+  ctx.reply(
+    "Данные успешно отправлены\nПосле заполнения в течении дня с вами свяжется консультант",
+    Markup.keyboard(btnMenu).oneTime().resize().extra()
+  );
 });
 
 module.exports = FormScene;

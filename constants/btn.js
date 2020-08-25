@@ -16,10 +16,17 @@ const genMenu = [
       url: "https://vean-shop.com",
     },
   ],
+  [
+    {
+      text: "Акции",
+      url: "https://vean-tattoo.com/aktsii",
+    },
+  ],
 ];
 
 const genTatu = [
   [Markup.callbackButton("У меня есть идея, эскиз", "tatuForm")],
+  [Markup.callbackButton("Заказать эскиз", "tatuFormIskiz")],
   [Markup.callbackButton("Нужна помощь!  Хочу узнать больше о тату!", "tatu-help")],
 ];
 

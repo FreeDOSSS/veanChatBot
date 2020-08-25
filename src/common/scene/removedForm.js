@@ -26,13 +26,13 @@ class FormHandler {
   async sendData() {
     const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nМесто и размер: ${this.description}\nГород: ${this.city}`;
     await telegram.sendMessage(CHAT_ID, text);
-    if (photo) {
+    if (this.photo) {
       await telegram.sendPhoto(CHAT_ID, this.photo[this.photo.length - 1].file_id);
     }
   }
 
   checkData() {
-    return !!this.name && !!this.phone && !!this.age && !!this.description ;
+    return !!this.name && !!this.phone && !!this.age && !!this.description;
   }
 }
 
@@ -88,7 +88,10 @@ const RemovedForm = new WizardScene(
 
 RemovedForm.leave((ctx) => {
   ctx.session.infoUser.sendData();
-  ctx.reply("Данные успешно отправлены", Markup.keyboard(btnMenu).oneTime().resize().extra());
+  ctx.reply(
+    "Данные успешно отправлены\nПосле заполнения в течении дня с вами свяжется консультант",
+    Markup.keyboard(btnMenu).oneTime().resize().extra()
+  );
 });
 
 module.exports = RemovedForm;

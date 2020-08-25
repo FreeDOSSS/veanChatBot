@@ -22,7 +22,7 @@ class FormHandler {
 
   sendData() {
     const text = `Имя: ${this.name}\nТелефон: ${this.phone}\nВозраст:  ${this.age}\nТекст: ${this.text}\nГород: ${this.city}`;
-    telegram.sendMessage(CHAT_ID, text).catch(err => console.log('err', err));
+    telegram.sendMessage(CHAT_ID, text).catch((err) => console.log("err", err));
   }
 
   checkData() {
@@ -71,7 +71,10 @@ const CommonForm = new WizardScene(
 CommonForm.leave((ctx) => {
   if (!ctx.session.infoUser.checkData()) return;
   ctx.session.infoUser.sendData();
-  ctx.reply("Данные успешно отправлены", Markup.keyboard(btnMenu).oneTime().resize().extra());
+  ctx.reply(
+    "Данные успешно отправлены\nПосле заполнения в течении дня с вами свяжется консультант",
+    Markup.keyboard(btnMenu).oneTime().resize().extra()
+  );
 });
 
 module.exports = CommonForm;

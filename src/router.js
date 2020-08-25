@@ -37,6 +37,10 @@ bot.action("tatu-price", TatuService.getPrice);
 bot.action("tatu-style", TatuService.getListStyle);
 bot.action("tatu-workExemple", TatuService.mastersCity);
 bot.action("tatuForm", (ctx) => ctx.scene.enter("formFirst"));
+bot.action("tatuFormIskiz", async (ctx) => {
+  await ctx.scene.enter("formFirst");
+  await ctx.session.infoUser.set("title", "Заказ эскиза");
+});
 
 // Пирсинг
 bot.action("genPirsing", PirsingService.genPiercing);
@@ -112,12 +116,13 @@ bot.command("sendNews", (ctx) => {
   ctx.scene.enter("SendNews");
 });
 bot.action("sendNews/send", async (ctx) => {
-  console.dir(ctx.session.infoUser)
+  console.dir(ctx.session.infoUser);
   await ctx.session.infoUser.sendData(ctx);
+  ctx.reply("sd");
   await ctx.reply(`${ctx.from.first_name}, что тебя интересует?`, inlineKeyboard(genMenu));
 });
 bot.action("sendNews/cancel", async (ctx) => {
-  await ctx.reply('Отмена новости');
+  await ctx.reply("Отмена новости");
   delete ctx.session.infoUser;
   await ctx.reply(`${ctx.from.first_name}, что тебя интересует?`, inlineKeyboard(genMenu));
 });

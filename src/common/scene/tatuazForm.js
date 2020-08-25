@@ -71,7 +71,10 @@ const FormTatuaz = new WizardScene(
 FormTatuaz.leave((ctx) => {
   if (!ctx.session.infoUser.checkData()) return;
   ctx.session.infoUser.sendData();
-  ctx.reply("Данные успешно отправлены", Markup.keyboard(btnMenu).oneTime().resize().extra());
+  ctx.reply(
+    "Данные успешно отправлены\nПосле заполнения в течении дня с вами свяжется консультант",
+    Markup.keyboard(btnMenu).oneTime().resize().extra()
+  );
 });
 
 module.exports = FormTatuaz;
